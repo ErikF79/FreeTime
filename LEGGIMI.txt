@@ -1,0 +1,9 @@
+FREETIME v0.9b - AGGIORNAMENTO AUTOMATICO PER v0.9
+1. Arrestare FreeTime con CTRL+C.
+2. Fare backup di C:\Python\FreeTime\data.
+3. Estrarre questo ZIP in una cartella temporanea.
+4. Eseguire INSTALLA_v0.9b.bat.
+5. Avviare FreeTime e premere CTRL+SHIFT+R.
+
+L'installer crea un backup automatico dei file modificati.
+Include: attivazione/disattivazione giocatori, controllo duplicati anche disabilitati, esclusione dalle nuove partite, trofei, CSV/JSON e backup ZIP.

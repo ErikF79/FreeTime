@@ -1,0 +1,102 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">RUOTA DELLA FORTUNA</span><h1>Ruota della fortuna</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+
+<div class="wheel-category">Categoria: <strong>{{ game.category }}</strong></div>
+
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr">
+  <div class="turn"><small>Turno di</small><b>{{ names.get(current_id,'—') }}</b></div>
+</div>
+
+<div class="wheel-phrase">{% for word in game.display_words() %}<span class="tile-word">{% for ch in word %}<span class="tile">{{ ch }}</span>{% endfor %}</span>{% endfor %}</div>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+{% if game.status=='active' %}
+  {% if game.spin_value is none %}
+  <form method="post" class="wheel-actions" id="spin-form">
+    <input type="hidden" name="action" value="spin">
+    <button class="primary" id="spin-btn" type="submit">Gira la ruota</button>
+  </form>
+  <div class="airport-board" id="airport-board" hidden><div class="airport-tile" id="airport-tile">—</div></div>
+  <script>
+  (function(){
+    var form=document.getElementById('spin-form');
+    if(!form || !window.fetch) return;
+    var board=document.getElementById('airport-board');
+    var tile=document.getElementById('airport-tile');
+    var btn=document.getElementById('spin-btn');
+    var CANDIDATES=['100','150','200','250','300','350','400','450','500','PERDI TURNO'];
+    form.addEventListener('submit',function(ev){
+      ev.preventDefault();
+      btn.disabled=true; form.style.display='none'; board.hidden=false;
+      fetch('{{ url_for("wheel_spin_ajax") }}',{method:'POST'})
+        .then(function(r){return r.json();})
+        .then(function(data){
+          var finalLabel = data.spin_value==='PERDITURNO' ? 'PERDI TURNO' : (data.spin_value+' PUNTI');
+          runAirport(finalLabel);
+        })
+        .catch(function(){ window.location.reload(); });
+    });
+    function runAirport(finalLabel){
+      var start=Date.now(), duration=5000;
+      function tick(){
+        var elapsed=Date.now()-start;
+        if(elapsed>=duration){
+          tile.textContent=finalLabel;
+          tile.classList.remove('flip'); void tile.offsetWidth; tile.classList.add('flip');
+          setTimeout(function(){ window.location.reload(); },600);
+          return;
+        }
+        tile.textContent=CANDIDATES[Math.floor(Math.random()*CANDIDATES.length)];
+        tile.classList.remove('flip'); void tile.offsetWidth; tile.classList.add('flip');
+        var progress=elapsed/duration;
+        var delay=70+progress*progress*430;
+        setTimeout(tick,delay);
+      }
+      tick();
+    }
+  })();
+  </script>
+  {% else %}
+  <div class="ruleset"><span>VALORE RUOTA</span><strong>{{ game.spin_value }} punti a lettera</strong></div>
+  <form method="post" class="wheel-actions">
+    <input type="hidden" name="action" value="letter">
+    <input type="text" name="letter" maxlength="1" required class="wheel-letter-input" autofocus>
+    <button class="primary">Indovina lettera</button>
+  </form>
+  {% if game.mode=='distruttivo' %}
+  <form method="post" class="wheel-actions">
+    <input type="hidden" name="action" value="attack">
+    <select name="target" class="mm-select" required>
+      <option value="" disabled selected>Scegli un avversario...</option>
+      {% for pid in game.participant_ids %}{% if pid!=current_id %}<option value="{{ pid }}">{{ names.get(pid,'—') }}</option>{% endif %}{% endfor %}
+    </select>
+    <button class="primary" style="background:#c0392b">Attacca (-{{ game.spin_value }} pt)</button>
+  </form>
+  {% endif %}
+  {% endif %}
+  <form method="post" class="wheel-actions">
+    <input type="hidden" name="action" value="phrase">
+    <input type="text" name="phrase_guess" placeholder="Prova a indovinare tutta la frase..." class="wheel-phrase-input">
+    <button class="primary">Indovina frase</button>
+  </form>
+{% else %}
+  <div class="result">
+    <h2>Manche conclusa! La frase era: {{ game.phrase }}</h2>
+    <form method="post" action="{{ url_for('wheel_rematch') }}"><button class="primary">Nuova manche →</button></form>
+  </div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">PUNTEGGI</span>
+  <h2>Classifica manche</h2>
+  {% for pid,score in sorted_scores %}
+  <div class="rank-row{% if pid==current_id and game.status=='active' %} current{% endif %}"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ score }} pt</strong></div>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

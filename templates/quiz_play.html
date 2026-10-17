@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">QUIZZONE</span><h1>Domanda {{ game.questions_played + 1 if game.status=='active' else game.questions_played }}</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr"><div class="turn"><small>Risponde</small><b>{{ names.get(current_id,'—') }}</b></div></div>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+{% if game.status=='active' %}
+<div class="mimo-card"><h2>{{ game.question }}</h2></div>
+<form method="post" class="quiz-options">
+{% for opt in game.options %}
+<button name="option" value="{{ loop.index0 }}" class="quiz-option">{{ opt }}</button>
+{% endfor %}
+</form>
+{% else %}
+<div class="result"><h2>Quiz concluso!</h2><form method="post" action="{{ url_for('quiz_rematch') }}"><button class="primary">Nuovo quiz →</button></form></div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">PUNTEGGI</span>
+  {% for pid,score in sorted_scores %}
+  <div class="rank-row{% if pid==current_id and game.status=='active' %} current{% endif %}"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ score }}</strong></div>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

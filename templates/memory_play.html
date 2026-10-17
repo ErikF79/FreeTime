@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">MEMORY</span><h1>Memory</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr"><div class="turn"><small>Turno di</small><b>{{ names.get(current_id,'—') }}</b></div></div>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+<form method="post" class="memory-grid">
+<input type="hidden" name="action" value="flip">
+{% for symbol in game.cards %}
+  {% set idx = loop.index0 %}
+  {% if game.matched[idx] %}
+  <button type="button" class="memory-card matched" disabled>{{ symbol }}</button>
+  {% elif idx in game.pending %}
+  <button type="button" class="memory-card revealed" disabled>{{ symbol }}</button>
+  {% else %}
+  <button name="cell" value="{{ idx }}" class="memory-card" {% if game.status!='active' or game.pending|length>=2 %}disabled{% endif %}>?</button>
+  {% endif %}
+{% endfor %}
+</form>
+
+{% if game.pending|length>=2 %}
+<form method="post" style="text-align:center;margin:16px 0"><input type="hidden" name="action" value="continue"><button class="primary">Continua</button></form>
+{% endif %}
+
+{% if game.status!='active' %}
+<div class="result"><h2>Partita conclusa!</h2><form method="post" action="{{ url_for('memory_rematch') }}"><button class="primary">Nuova partita →</button></form></div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">PUNTEGGI</span>
+  <h2>Coppie trovate</h2>
+  {% for pid,score in sorted_scores %}
+  <div class="rank-row{% if pid==current_id and game.status=='active' %} current{% endif %}"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ score }}</strong></div>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

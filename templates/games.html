@@ -1,0 +1,46 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">LIBRERIA</span><h1>Tutti i giochi</h1><p>Scegli un gioco per iniziare una nuova partita.</p></header>
+
+<section class="catalog-grid">
+{% for g in games %}
+<article class="catalog-card{% if g.status!='ready' %} planned{% endif %}">
+  {% if g.status!='ready' %}<span class="badge-soon">In arrivo</span>{% endif %}
+  <i>{{ g.icon }}</i>
+  <h2>{{ g.name }}</h2>
+  <p>{{ g.description }}</p>
+  <small>{{ g.player_label }} · {{ g.category }}</small>
+  {% if g.status=='ready' %}
+    {% if g.game_id=='wheel' %}
+    <a class="catalog-play" href="{{ url_for('new_match_wheel') }}">Gioca →</a>
+    {% elif g.game_id=='memory' %}
+    <a class="catalog-play" href="{{ url_for('new_match_memory') }}">Gioca →</a>
+    {% elif g.game_id=='mastermind' %}
+    <a class="catalog-play" href="{{ url_for('new_match_mastermind') }}">Gioca →</a>
+    {% elif g.game_id=='impiccato' %}
+    <a class="catalog-play" href="{{ url_for('new_match_impiccato') }}">Gioca →</a>
+    {% elif g.game_id=='mimo' %}
+    <a class="catalog-play" href="{{ url_for('new_match_mimo') }}">Gioca →</a>
+    {% elif g.game_id=='sequence' %}
+    <a class="catalog-play" href="{{ url_for('new_match_sequence') }}">Gioca →</a>
+    {% elif g.game_id=='quiz' %}
+    <a class="catalog-play" href="{{ url_for('new_match_quiz') }}">Gioca →</a>
+    {% elif g.game_id=='crossword' %}
+    <a class="catalog-play" href="{{ url_for('new_match_crossword') }}">Gioca →</a>
+    {% else %}
+    <a class="catalog-play" href="{{ url_for('new_match') }}?game={{ g.game_id }}">Gioca →</a>
+    {% endif %}
+  {% endif %}
+</article>
+{% endfor %}
+</section>
+
+{% set has_ruleset_games = games|selectattr('game_id','in',['tictactoe','connect4'])|selectattr('status','equalto','ready')|list %}
+{% if has_ruleset_games %}
+<header class="page" style="margin-top:44px"><span class="tag">MODALITÀ</span><h1 style="font-size:34px">RuleSet di Tris e Forza 4</h1><p>Si scelgono al momento di avviare la partita — non sono giochi a sé, ma varianti di regole valide per entrambi.</p></header>
+<section class="rulesets">
+{% for r in rulesets %}
+<article class="{% if r.enabled %}enabled{% endif %}"><span>{{ loop.index }}</span><h2>{{ r.name }}</h2><p>{{ r.description }}</p>{% if r.removal_enabled %}<small>Massimo {{ r.max_removals_per_player }} cancellazioni per giocatore</small>{% endif %}<b>{% if r.enabled %}DISPONIBILE{% else %}IN ARRIVO{% endif %}</b></article>
+{% endfor %}
+</section>
+{% endif %}
+{% endblock %}

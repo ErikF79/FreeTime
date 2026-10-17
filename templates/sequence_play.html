@@ -1,0 +1,54 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">SEQUENZA NUMERI</span><h1>Sequenza numeri</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr"><div class="turn"><small>In gara</small><b>{{ names.get(current_id,'—') }}</b></div></div>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+{% if game.status=='active' and game.phase=='waiting_ready' %}
+<form method="post" style="text-align:center;margin:30px 0"><input type="hidden" name="action" value="ready"><button class="primary">Pronti? Via!</button></form>
+
+{% elif game.status=='active' and game.phase=='playing' %}
+<div id="live-clock" style="text-align:center;font-family:'Courier New',monospace;font-size:30px;color:#c8ff3d;margin:14px 0">0.0s</div>
+<script>
+(function(){var el=document.getElementById('live-clock');if(!el)return;var start=Date.now();
+setInterval(function(){el.textContent=((Date.now()-start)/1000).toFixed(1)+'s';},100);})();
+</script>
+<p style="text-align:center;color:var(--muted)">Prossimo:
+{% set nl = game.next_item() %}
+{% if nl and nl.kind=='color' %}<strong style="color:white">la sfumatura {{ game.next_expected }}ª (dalla più chiara alla più scura)</strong>
+{% elif nl %}<strong style="color:white">{{ nl.label }}</strong>
+{% endif %}</p>
+<div class="sequence-grid" style="grid-template-columns:repeat({{ (game.grid_size ** 0.5)|round|int }},1fr)">
+{% for item in game.items %}
+{% set idx = loop.index0 %}
+<form method="post" style="display:contents">
+  <input type="hidden" name="action" value="tap">
+  {% if idx in game.done_indices %}
+    {% if item.kind=='color' %}<button type="button" class="memory-card matched" disabled style="background:{{ item.label }}"></button>
+    {% else %}<button type="button" class="memory-card matched" disabled>{{ item.label }}</button>{% endif %}
+  {% else %}
+    {% if item.kind=='color' %}<button name="index" value="{{ idx }}" class="memory-card" style="background:{{ item.label }}"></button>
+    {% else %}<button name="index" value="{{ idx }}" class="memory-card">{{ item.label }}</button>{% endif %}
+  {% endif %}
+</form>
+{% endfor %}
+</div>
+
+{% else %}
+<div class="result"><h2>Gara conclusa!</h2><form method="post" action="{{ url_for('sequence_rematch') }}"><button class="primary">Nuova gara →</button></form></div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">CLASSIFICA TEMPI</span>
+  {% for pid,t in sorted_times %}
+  <div class="rank-row"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ t }}s</strong></div>
+  {% else %}
+  <p style="color:var(--muted)">Nessun tempo registrato ancora.</p>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

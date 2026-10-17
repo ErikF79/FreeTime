@@ -1,0 +1,11 @@
+[
+  {"game_id":"quiz","question":"Qual è la capitale d'Italia?","options":["Milano","Roma","Napoli","Torino"],"correct_index":1},
+  {"game_id":"quiz","question":"In quale città e anno nasce il baskin?","options":["Cremona, 2003","Milano, 1998","Bologna, 2010","Torino, 1995"],"correct_index":0},
+  {"game_id":"quiz","question":"Quanti giocatori ci sono in campo in una squadra di pallacanestro tradizionale?","options":["4","5","6","7"],"correct_index":1},
+  {"game_id":"quiz","question":"Qual è il fiume più lungo d'Italia?","options":["Tevere","Arno","Po","Adige"],"correct_index":2},
+  {"game_id":"quiz","question":"Chi ha vinto le NBA Finals 2026?","options":["Indiana Pacers","New York Knicks","Oklahoma City Thunder","San Antonio Spurs"],"correct_index":1},
+  {"game_id":"quiz","question":"Quanti anelli ha la bandiera olimpica?","options":["4","5","6","3"],"correct_index":1},
+  {"game_id":"wheel","category":"Geografia","phrase":"Colosseo di Roma"},
+  {"game_id":"impiccato","category":"Sport","phrase":"Basket in carrozzina"},
+  {"game_id":"mimo","category":"Sport","phrase":"Fare un canestro"}
+]

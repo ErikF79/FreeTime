@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">NUOVA PARTITA</span><h1>Quizzone</h1><p>Domande a risposta multipla inserite dagli istruttori. A turno, una domanda ciascuno.</p></header>
+
+{% if pending %}
+<div class="msg" style="background:rgba(200,255,61,.1);color:#c8ff3d">{{ pending|length }} domanda/e pronte in coda.</div>
+{% else %}
+<div class="msg error">Nessuna domanda in coda. Chiedi a un istruttore di inserirne una dal <a href="{{ url_for('instructor_panel') }}" style="text-decoration:underline">Pannello istruttore</a>.</div>
+{% endif %}
+
+<form method="post" class="setup">
+  <section>
+    <h2>Modalità</h2>
+    <div class="choices">
+      <label><input type="radio" name="mode" value="classico" checked><span><b>C</b><strong>Classico</strong><small>Domanda successiva a un altro</small></span></label>
+      <label><input type="radio" name="mode" value="turno_conquistato"><span><b>TC</b><strong>Turno conquistato</strong><small>Risposta giusta: rispondi ancora</small></span></label>
+    </div>
+  </section>
+  <section>
+    {% if tournament_teams %}<h2>Squadre in gara</h2><div class="msg" style="background:rgba(200,255,61,.1);color:#c8ff3d">{% for t in tournament_teams %}{{ t.name }}{% if not loop.last %} 🆚 {% endif %}{% endfor %}</div>{% else %}<h2>Partecipanti</h2><div class="people">{% for p in players %}<label><input type="checkbox" name="player_ids" value="{{ p.id }}"><i>{{ p.name[0]|upper }}</i><span><strong>{{ p.name }}</strong><small>{{ p.games }} partite</small></span></label>{% endfor %}</div>{% endif %}
+  </section>
+  <button class="primary"{% if not pending %} disabled{% endif %}>Avvia →</button>
+</form>
+{% endblock %}

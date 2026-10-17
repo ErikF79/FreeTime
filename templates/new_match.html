@@ -1,0 +1,38 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">{% if tournament_teams %}TORNEO{% else %}NUOVA PARTITA{% endif %}</span><h1>Configura la sfida</h1>
+<p>{% if tournament_teams %}Gioco e squadre sono già decisi dal torneo: scegli solo le regole.{% else %}Scegli gioco, modalità, regole e partecipanti.{% endif %}</p></header>
+<form method="post" class="setup">
+{% if tournament_teams %}
+  <input type="hidden" name="game_id" value="{{ preselect }}">
+  <section>
+    <h2>Squadre in gara</h2>
+    <div class="msg" style="background:rgba(200,255,61,.1);color:#c8ff3d">{% for t in tournament_teams %}{{ t.name }}{% if not loop.last %} 🆚 {% endif %}{% endfor %} — {{ 'Tris' if preselect=='tictactoe' else 'Forza 4' }}</div>
+  </section>
+  <section>
+    <h2>Regole</h2>
+    <div class="choices ruleset-choices">
+      <label><input type="radio" name="ruleset_id" value="classic" checked><span><b>CL</b><strong>Classico</strong><small>Disponibile per entrambi i giochi</small></span></label>
+      <label><input type="radio" name="ruleset_id" value="earned_turn"><span><b>TB</b><strong>Turno conquistato</strong><small>Disponibile per entrambi</small></span></label>
+      <label><input type="radio" name="ruleset_id" value="destructive"><span><b>DX</b><strong>Distruttivo</strong><small>Disponibile per entrambi</small></span></label>
+    </div>
+  </section>
+{% else %}
+  <section><h2>1. Gioco</h2><div class="choices">
+    <label><input type="radio" name="game_id" value="tictactoe"{% if preselect=='tictactoe' %} checked{% endif %}><span><b>XO</b><strong>Tris</strong><small>Tre RuleSet disponibili</small></span></label>
+    <label><input type="radio" name="game_id" value="connect4"{% if preselect=='connect4' %} checked{% endif %}><span><b>4</b><strong>Forza 4</strong><small>Tutti i RuleSet disponibili</small></span></label>
+  </div></section>
+  <section><h2>2. Modalità</h2><div class="choices">
+    <label><input type="radio" name="mode" value="duel"><span><b>1:1</b><strong>Coppia</strong><small>Due giocatori locali</small></span></label>
+    <label><input type="radio" name="mode" value="vs_pc"><span><b>PC</b><strong>Contro il PC</strong><small>Facile o Media</small></span></label>
+  </div></section>
+  <section><h2>3. Regole</h2><div class="choices ruleset-choices">
+    <label><input type="radio" name="ruleset_id" value="classic" checked><span><b>CL</b><strong>Classico</strong><small>Disponibile per entrambi i giochi</small></span></label>
+    <label><input type="radio" name="ruleset_id" value="earned_turn"><span><b>TB</b><strong>Turno conquistato</strong><small>Disponibile per entrambi</small></span></label>
+    <label><input type="radio" name="ruleset_id" value="destructive"><span><b>DX</b><strong>Distruttivo</strong><small>Disponibile per entrambi</small></span></label>
+  </div></section>
+  <section><h2>4. Partecipanti</h2><div class="people">{% for p in players %}<label><input type="checkbox" name="player_ids" value="{{ p.id }}"><i>{{ p.name[0]|upper }}</i><span><strong>{{ p.name }}</strong><small>{{ p.games }} partite</small></span></label>{% endfor %}</div></section>
+  <section><h2>5. Difficoltà PC</h2><select name="difficulty"><option value="easy">Facile</option><option value="medium">Media</option></select></section>
+{% endif %}
+<button class="primary">Avvia la partita →</button>
+</form>
+{% endblock %}

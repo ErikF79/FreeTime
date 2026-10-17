@@ -1,0 +1,28 @@
+{% extends 'base.html' %}{% block content %}
+<header id="board-area" class="page"><span class="tag">INDOVINA MIMANDO</span><h1>Tocca a: {{ names.get(current_id,'—') }}</h1><p>Mostra lo schermo solo a chi mima. Gli altri indovinano a voce.</p></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+
+{% if game.status=='active' %}
+<div class="mimo-card">
+  {% if game.category %}<span class="tag">{{ game.category }}</span>{% endif %}
+  <h2>{{ game.phrase }}</h2>
+</div>
+<form method="post" class="wheel-actions">
+  <button class="primary" name="action" value="correct">Indovinato!</button>
+  <button name="action" value="pass" style="background:#0b1122;border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:0 20px;min-height:52px">Passa</button>
+</form>
+{% else %}
+<div class="result"><h2>Manche conclusa!</h2><form method="post" action="{{ url_for('mimo_rematch') }}"><button class="primary">Nuova manche →</button></form></div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">MIMI RIUSCITI</span>
+  {% for pid,score in sorted_scores %}
+  <div class="rank-row"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ score }}</strong></div>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

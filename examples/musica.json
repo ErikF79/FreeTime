@@ -1,0 +1,9 @@
+[
+  {"game_id":"quiz","question":"Chi ha vinto il Festival di Sanremo 2026?","options":["Olly","Achille Lauro","Sal Da Vinci","Annalisa"],"correct_index":2},
+  {"game_id":"quiz","question":"Con quale strumento si accompagnano tipicamente le canzoni napoletane classiche?","options":["Mandolino","Tromba","Violino","Fisarmonica"],"correct_index":0},
+  {"game_id":"quiz","question":"Quale cantante ha reso famosa la canzone 'Azzurro'?","options":["Domenico Modugno","Adriano Celentano","Lucio Dalla","Gianni Morandi"],"correct_index":1},
+  {"game_id":"wheel","category":"Musica","phrase":"Nel blu dipinto di blu"},
+  {"game_id":"impiccato","category":"Musica","phrase":"Viva la vita"},
+  {"game_id":"mimo","category":"Musica","phrase":"Bella ciao"},
+  {"game_id":"mimo","category":"Musica","phrase":"Azzurro"}
+]

@@ -1,0 +1,25 @@
+FREETIME v0.6a - HOTFIX MODALITA A SQUADRE
+
+CONTENUTO
+- File completo templates\match_participants.html
+- Correzione nesting Jinja2: ogni ciclo for viene chiuso prima di else/endif.
+
+INSTALLAZIONE
+1. Arrestare FreeTime con CTRL+C.
+2. Estrarre il contenuto dello ZIP direttamente in C:\Python\FreeTime.
+3. Confermare la sostituzione del file esistente.
+4. Avviare da Anaconda Prompt:
+   cd /d C:\Python\FreeTime
+   python app.py
+5. In Edge o Chrome premere CTRL+SHIFT+R.
+
+TEST
+1. Nuova partita.
+2. Modalita A squadre.
+3. Selezionare almeno due squadre, anche con membri condivisi.
+4. Premere Continua.
+5. Selezionare il gioco.
+6. Verificare il riepilogo e confermare.
+
+DATI
+L'hotfix non contiene e non modifica players.json, teams.json o matches.json.

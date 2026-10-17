@@ -1,0 +1,60 @@
+{% extends 'base.html' %}{% block content %}
+{% if active_tournament %}
+<section class="hero">
+  <div>
+    <span class="tag">TORNEO IN CORSO</span>
+    <h1>{{ active_tournament.name }}</h1>
+    <p>{{ active_tournament.played }} di {{ active_tournament.total }} giochi del programma completati.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin:18px 0;max-width:340px">
+      {% for name,pts in active_tournament.standings %}
+      <div style="display:flex;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.06);border-radius:14px"><span>{{ loop.index }}. {{ name }}</span><strong>{{ pts }} pt</strong></div>
+      {% else %}
+      <p style="color:var(--muted)">Nessuna partita ancora giocata in questo torneo.</p>
+      {% endfor %}
+    </div>
+    <a class="play" href="{{ url_for('game_sessions') }}">▶ <span><b>Continua il torneo</b><small>Vai alle Sessioni</small></span> →</a>
+  </div>
+  <div class="hero-xo">🏆</div>
+</section>
+{% else %}
+<section class="hero">
+  <div>
+    <span class="tag">FREETIME</span>
+    <h1>Gioca insieme.<br><em>Cresci come team.</em></h1>
+    <p>{{ games_available }} giochi diversi, sessioni e classifiche trasformano ogni partita in un evento.</p>
+    <a class="play" href="{{ url_for('games') }}">▶ <span><b>Sfoglia tutti i giochi</b><small>{{ games_available }} disponibili</small></span> →</a>
+  </div>
+  <div class="hero-xo">🎲</div>
+</section>
+{% endif %}
+
+<section class="stats">
+  <a href="{{ url_for('players') }}"><b>{{ players }}</b><small>Giocatori</small></a>
+  <a href="{{ url_for('history') }}"><b>{{ results }}</b><small>Partite</small></a>
+  <a href="{{ url_for('games') }}"><b>{{ games_available }}</b><small>Giochi disponibili</small></a>
+  <a href="{{ url_for('game_sessions') }}"><b>{{ sessions|length }}</b><small>Sessioni</small></a>
+</section>
+
+<section class="dashboard-grid">
+  <article class="dash-card">
+    <span class="tag">CLASSIFICA</span>
+    <h2>Top giocatori</h2>
+    {% for p in leaderboard %}<a class="rank-row" href="{{ url_for('player_profile',player_id=p.id) }}"><b>{{ loop.index }}</b><span>{{ p.name }}</span><strong>{{ p.points }} pt</strong></a>{% else %}<p>Nessun risultato disponibile.</p>{% endfor %}
+  </article>
+  <article class="dash-card">
+    <span class="tag">TREND</span>
+    <h2>Preferenze</h2>
+    <div class="trend"><small>Gioco più usato</small><strong>{% if favorite_game %}{{ favorite_game }}{% else %}N/D{% endif %}</strong></div>
+    <div class="trend"><small>RuleSet più usato</small><strong>{{ favorite_ruleset or 'N/D' }}</strong></div>
+    <div class="trend"><small>Sessione attiva</small><strong>{% if active_session_id %}Attiva{% else %}Nessuna{% endif %}</strong></div>
+  </article>
+  {% if not active_tournament %}
+  <article class="dash-card">
+    <span class="tag">TEAM BUILDING</span>
+    <h2>Prova un mini-torneo</h2>
+    <p style="color:var(--muted);font-size:14px">Crea due o più squadre e organizza un vero torneo: qualsiasi partita giocata assegna punti alla squadra, in automatico.</p>
+    <a class="catalog-play" href="{{ url_for('game_sessions') }}" style="display:inline-block;margin-top:12px">Vai alle Sessioni →</a>
+  </article>
+  {% endif %}
+</section>
+{% endblock %}

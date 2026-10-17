@@ -1,0 +1,64 @@
+{% extends "flow_base.html" %}
+{% set current = 2 %}
+{% set back_url = url_for('match_mode') %}
+
+{% block title %}FreeTime | Partecipanti{% endblock %}
+
+{% block flow %}
+<section class="flow-title">
+    <span class="kicker">{{ mode_label|upper }}</span>
+    <h1>
+        {% if mode == 'team' %}
+            Scegli le squadre
+        {% else %}
+            Scegli i giocatori
+        {% endif %}
+    </h1>
+    <p>
+        {% if mode == 'vs_pc' %}
+            Seleziona una persona
+        {% elif mode == 'duel' %}
+            Seleziona due persone
+        {% elif mode == 'tournament' %}
+            Seleziona almeno tre persone
+        {% else %}
+            Seleziona almeno due squadre
+        {% endif %}
+    </p>
+</section>
+
+<form method="post">
+    <div class="people-list">
+        {% if mode == 'team' %}
+            {% for item in teams %}
+                <label class="list-row">
+                    <input type="checkbox" name="team_ids" value="{{ item.id }}">
+                    <span class="avatar cyan">{{ item.name[0]|upper }}</span>
+                    <span>
+                        <strong>{{ item.name }}</strong>
+                        <small>{{ item.player_ids|length }} componenti</small>
+                    </span>
+                    <i>✓</i>
+                </label>
+            {% endfor %}
+        {% else %}
+            {% for item in players %}
+                <label class="list-row">
+                    <input type="checkbox" name="participant_ids" value="{{ item.id }}">
+                    <span class="avatar">{{ item.name[0]|upper }}</span>
+                    <span>
+                        <strong>{{ item.name }}</strong>
+                        <small>Giocatore</small>
+                    </span>
+                    <i>✓</i>
+                </label>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="action-bar">
+        <a href="{{ back_url }}">Indietro</a>
+        <button type="submit">Continua <span>→</span></button>
+    </div>
+</form>
+{% endblock %}

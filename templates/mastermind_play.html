@@ -1,0 +1,40 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">MASTERMIND</span><h1>Mastermind</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr"><div class="turn"><small>Turno di</small><b>{{ names.get(current_id,'—') }}</b></div></div>
+<p style="text-align:center;color:var(--muted)">Tentativo {{ game.guesses|length + (1 if game.status=='active' else 0) }} di {{ game.max_attempts }}</p>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+{% if game.status=='active' %}
+<form method="post" class="wheel-actions" style="flex-wrap:wrap">
+{% for i in range(game.length) %}
+<div class="peg-picker">
+{% for c in colors %}
+<label class="peg-option"><input type="radio" name="peg{{ i }}" value="{{ c }}" required><span class="peg-swatch mm-{{ c }}"></span></label>
+{% endfor %}
+</div>
+{% endfor %}
+<button class="primary">Prova</button>
+</form>
+{% else %}
+<div class="result">
+  <h2>{% if game.status=='won' %}Codice indovinato da {{ names.get(game.winner_id,'—') }}!{% else %}Tentativi esauriti.{% endif %}</h2>
+  <div class="mm-row"><span class="mm-label">Codice segreto</span>{% for c in game.code %}<span class="mm-peg mm-{{ c }}"></span>{% endfor %}</div>
+  <form method="post" action="{{ url_for('mastermind_rematch') }}"><button class="primary">Nuova partita →</button></form>
+</div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">STORICO TENTATIVI</span>
+  {% for g in game.guesses|reverse %}
+  <div class="mm-row"><span class="mm-label">{{ names.get(g.player_id,'—') }}</span>{% for c in g.guess %}<span class="mm-peg mm-{{ c }}"></span>{% endfor %}<small>{{ g.black }} esatti · {{ g.white }} spostati</small></div>
+  {% else %}
+  <p style="color:var(--muted)">Nessun tentativo ancora.</p>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

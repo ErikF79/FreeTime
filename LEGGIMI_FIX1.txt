@@ -1,0 +1,15 @@
+FREETIME v0.8a FIX1
+Ripristina la Home multi-gioco e lo Storico unificato, mantenendo Forza 4 Turno conquistato.
+
+INSTALLAZIONE
+1. CTRL+C
+2. Backup C:\Python\FreeTime\data
+3. Estrarre in C:\Python\FreeTime sostituendo i file
+4. python app.py
+5. CTRL+SHIFT+R
+
+TEST
+- Home mostra Tris e Forza 4
+- Storico mostra entrambi i giochi
+- Forza 4 Turno conquistato funziona
+- python test_connect4_earned_turn.py

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+data/*.json
+data/pre_restore_backup_*/
+data_backup*/
+BACKUP_*/
+Patch/
+*.zip
+.env
+.pytest_cache/

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">{{ game.title or 'CRUCIVERBA' }}</span><h1>Cruciverba a squadre</h1></header>
+<div class="game-shell"><div class="game-grid"><div class="game-main">
+<div id="board-area" class="scorebar" style="grid-template-columns:1fr"><div class="turn"><small>Turno di</small><b>{{ names.get(current_id,'—') }}</b></div></div>
+
+{% if game.last_message %}<div class="msg wheel-note">{{ game.last_message }}</div>{% endif %}
+
+<div class="cw-grid-wrap">
+  <div class="cw-grid" style="grid-template-columns:repeat({{ game.width }},1fr)">
+  {% for row in game.matrix() %}
+    {% for cell in row %}
+      {% if cell.active %}<div class="cw-cell{% if cell.tentative %} tentative{% endif %}">{% if cell.number %}<span class="cw-num">{{ cell.number }}</span>{% endif %}{{ cell.letter }}</div>{% else %}<div class="cw-cell blank"></div>{% endif %}
+    {% endfor %}
+  {% endfor %}
+  </div>
+</div>
+
+{% if game.status=='active' %}
+<div class="dash-card" style="margin:16px 0">
+  <span class="tag">COMPRA UNA LETTERA</span>
+  <p style="color:var(--muted);font-size:13px;margin:6px 0 12px">{% if game.moves_played==0 %}La prima mossa della partita è gratuita: la lettera scelta comparirà in tutto lo schema.{% else %}Costa 15 punti alla squadra di turno; la lettera scelta comparirà in tutto lo schema.{% endif %}</p>
+  <form method="post" class="wheel-actions">
+    <input type="hidden" name="action" value="reveal">
+    <input type="text" name="letter" maxlength="1" required class="wheel-letter-input" style="width:56px">
+    <button class="primary">{% if game.moves_played==0 %}Rivela gratis{% else %}Compra (-15 pt){% endif %}</button>
+  </form>
+  <form method="post" style="margin-top:10px">
+    <input type="hidden" name="action" value="pass">
+    <button style="background:#0b1122;border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:0 20px;min-height:44px">Passa il turno</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="crossword-list">
+{% for entry in game.entries %}
+<div class="crossword-entry{% if game.is_entry_solved(entry) %} solved{% endif %}">
+  <div class="crossword-clue"><b>{{ entry.number }}{{ '→' if entry.direction=='across' else '↓' }}</b> {{ entry.clue }} <small style="color:var(--muted)">({{ entry.answer|length }} lettere)</small></div>
+  {% if game.status=='active' and not game.is_entry_solved(entry) %}
+  <form method="post" style="display:flex;gap:8px;margin-top:6px">
+    <input type="hidden" name="action" value="word">
+    <input type="hidden" name="entry_index" value="{{ loop.index0 }}">
+    <input type="text" name="word" maxlength="{{ entry.answer|length }}" required class="wheel-letter-input" style="width:auto;flex:1;text-transform:uppercase" placeholder="Scrivi la parola intera...">
+    <button class="primary" style="min-height:42px">Prova</button>
+  </form>
+  {% endif %}
+</div>
+{% endfor %}
+</div>
+
+{% if game.status!='active' %}
+<div class="result"><h2>Cruciverba completato!</h2><form method="post" action="{{ url_for('crossword_rematch') }}"><button class="primary">Nuovo cruciverba →</button></form></div>
+{% endif %}
+
+</div>
+<aside class="game-aside">
+<section class="dash-card">
+  <span class="tag">PUNTEGGI SQUADRE</span>
+  {% for pid,score in sorted_scores %}
+  <div class="rank-row{% if pid==current_id and game.status=='active' %} current{% endif %}"><b>{{ loop.index }}</b><span>{{ names.get(pid,'—') }}</span><strong>{{ score }} pt</strong></div>
+  {% endfor %}
+</section>
+</aside>
+</div></div>
+{% endblock %}

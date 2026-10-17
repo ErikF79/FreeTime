@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">TEAM</span><h1>Squadre</h1><p>Crea squadre per organizzare tornei e attività di gruppo.</p></header>
+
+<form method="post" class="setup">
+  <section>
+    <h2>Nuova squadra</h2>
+    <label class="field"><span>Nome squadra</span><input type="text" name="name" placeholder="Es. Squadra Rossa" maxlength="30" required></label>
+    <div class="people" style="margin-top:14px">{% for p in players %}<label><input type="checkbox" name="player_ids" value="{{ p.id }}"><i>{{ p.name[0]|upper }}</i><span><strong>{{ p.name }}</strong></span></label>{% endfor %}</div>
+  </section>
+  <button class="primary">Crea squadra</button>
+</form>
+
+<section class="profiles" style="margin-top:24px">
+{% for t in teams %}
+<article>
+  <i>{{ t.name[0]|upper }}</i>
+  <strong>{{ t.name }}</strong>
+  <small>{% for id in t.player_ids %}{{ names.get(id,'?') }}{% if not loop.last %} · {% endif %}{% endfor %}</small>
+  <form method="post" action="{{ url_for('delete_team',team_id=t.id) }}" onsubmit="return confirm('Rimuovere questa squadra?')" style="margin-top:10px"><button type="submit" style="padding:8px 14px;border:1px solid var(--line);border-radius:11px;background:#0b1122;color:#fb7185;cursor:pointer">Rimuovi</button></form>
+</article>
+{% else %}
+<p style="color:var(--muted)">Nessuna squadra creata ancora.</p>
+{% endfor %}
+</section>
+{% endblock %}

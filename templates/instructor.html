@@ -1,0 +1,117 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page"><span class="tag">RISERVATO ISTRUTTORI</span><h1>Pannello istruttore</h1><p>Prepara i contenuti per la prossima manche. I ragazzi non vedono questa pagina.</p></header>
+
+<section class="dash-card">
+  <span class="tag">PARTI SUBITO</span>
+  <h2>Pacchetti di esempio pronti all'uso</h2>
+  <p style="color:var(--muted);font-size:14px;margin:0 0 14px">Utili per testare i giochi a parole prima ancora di scrivere i vostri contenuti. Puoi caricarli quante volte vuoi, si aggiungono in coda senza cancellare nulla.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+  {% for key,label in example_packs.items() %}
+  <form method="post" action="{{ url_for('load_examples',pack=key) }}"><button class="primary" style="background:#0b1122;border:1px solid var(--line)">Carica: {{ label }}</button></form>
+  {% endfor %}
+  </div>
+</section>
+
+<form method="post" class="setup" style="margin-top:24px">
+  <section>
+    <h2>Nuova frase da indovinare</h2>
+    <div class="instructor-fields">
+      <label class="field"><span>Gioco</span>
+        <select name="game_id">
+          {% for gid,label in phrase_games.items() %}<option value="{{ gid }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="field"><span>Categoria (dà il contesto — es. Sport, Film, Musica)</span><input type="text" name="category" placeholder="Es. Sport, Film, Baskin..." maxlength="30" required></label>
+    </div>
+    <label class="field" style="margin-top:10px"><span>Frase o parola da indovinare</span><input type="text" name="phrase" placeholder="Es. Palla al centro" maxlength="60" required></label>
+    <small class="hint">Solo lettere, spazi e punteggiatura semplice. Massimo 60 caratteri. Per Indovina mimando puoi scrivere anche un titolo di film o canzone.</small>
+  </section>
+  <button class="primary">Aggiungi alla coda</button>
+</form>
+
+<form method="post" class="setup" style="margin-top:24px">
+  <input type="hidden" name="game_id" value="quiz">
+  <section>
+    <h2>Nuova domanda per il Quizzone</h2>
+    <label class="field"><span>Domanda</span><input type="text" name="question" placeholder="Es. In quale anno nasce il basket in carrozzina?" maxlength="140" required></label>
+    <div class="instructor-fields" id="quiz-options" style="grid-template-columns:1fr 1fr;margin-top:10px">
+      {% for i in range(4) %}
+      <label class="field"><span><input type="radio" name="correct_index" value="{{ i }}" required> Risposta {{ i+1 }}{% if i==0 %} — corretta{% endif %}</span><input type="text" name="option{{ i }}" maxlength="60" placeholder="Risposta {{ i+1 }}" required></label>
+      {% endfor %}
+      {% for i in range(4,8) %}
+      <label class="field hidden-extra"><span><input type="radio" name="correct_index" value="{{ i }}"> Risposta {{ i+1 }}</span><input type="text" name="option{{ i }}" maxlength="60" placeholder="Risposta {{ i+1 }}"></label>
+      {% endfor %}
+    </div>
+    <button type="button" class="add-field-btn" data-target="quiz-options">+ Aggiungi un'altra risposta</button>
+    <small class="hint">Seleziona il pallino accanto alla risposta giusta. Fino a 8 risposte in tutto.</small>
+  </section>
+  <button class="primary">Aggiungi domanda</button>
+</form>
+
+<form method="post" class="setup" style="margin-top:24px">
+  <input type="hidden" name="game_id" value="crossword">
+  <section>
+    <h2>Nuovo Cruciverba</h2>
+    <label class="field"><span>Titolo (facoltativo)</span><input type="text" name="cw_title" placeholder="Es. Sport e Baskin" maxlength="40"></label>
+    <small class="hint">Inserisci almeno 3 coppie indizio/risposta (fino a 20). Le risposte devono essere una singola parola, solo lettere (niente spazi, numeri o simboli) — servono per incrociarle nello schema.</small>
+    <div id="cw-fields">
+    {% for i in range(6) %}
+    <div class="instructor-fields" style="grid-template-columns:2fr 1fr;margin-top:10px">
+      <label class="field"><span>Indizio {{ i+1 }}</span><input type="text" name="cw_clue{{ i }}" maxlength="80" placeholder="Es. Attrezzo per segnare i canestri"></label>
+      <label class="field"><span>Risposta {{ i+1 }}</span><input type="text" name="cw_answer{{ i }}" maxlength="20" placeholder="Es. Pallone"></label>
+    </div>
+    {% endfor %}
+    {% for i in range(6,20) %}
+    <div class="instructor-fields hidden-extra" style="grid-template-columns:2fr 1fr;margin-top:10px">
+      <label class="field"><span>Indizio {{ i+1 }}</span><input type="text" name="cw_clue{{ i }}" maxlength="80"></label>
+      <label class="field"><span>Risposta {{ i+1 }}</span><input type="text" name="cw_answer{{ i }}" maxlength="20"></label>
+    </div>
+    {% endfor %}
+    </div>
+    <button type="button" class="add-field-btn" data-target="cw-fields">+ Aggiungi un'altra parola</button>
+  </section>
+  <button class="primary">Aggiungi cruciverba</button>
+</form>
+
+<script>
+(function(){
+  var buttons=document.querySelectorAll('.add-field-btn');
+  for(var i=0;i<buttons.length;i++){
+    buttons[i].addEventListener('click',function(ev){
+      var container=document.getElementById(ev.currentTarget.getAttribute('data-target'));
+      if(!container) return;
+      var hidden=container.querySelectorAll('.hidden-extra');
+      if(hidden.length){ hidden[0].classList.remove('hidden-extra'); }
+      if(hidden.length<=1){ ev.currentTarget.style.display='none'; }
+    });
+  }
+})();
+</script>
+
+<section class="dash-card" style="margin-top:24px">
+  <span class="tag">IN CODA</span>
+  {% for gid,label in phrase_games.items() %}
+  <h2>{{ label }} ({{ pending[gid]|length }})</h2>
+  {% for c in pending[gid] %}
+  <div class="queue-row"><div><strong>{{ c.phrase }}</strong>{% if c.category %}<small> — {{ c.category }}</small>{% endif %}</div>
+  <form method="post" action="{{ url_for('instructor_delete',content_id=c.id) }}" onsubmit="return confirm('Rimuovere questo contenuto dalla coda?')"><button type="submit">Rimuovi</button></form></div>
+  {% else %}
+  <p style="color:var(--muted)">Nessun contenuto in coda.</p>
+  {% endfor %}
+  {% endfor %}
+  <h2>Quizzone ({{ pending.quiz|length }})</h2>
+  {% for c in pending.quiz %}
+  <div class="queue-row"><div><strong>{{ c.question }}</strong><small> — corretta: {{ c.options[c.correct_index] }}</small></div>
+  <form method="post" action="{{ url_for('instructor_delete',content_id=c.id) }}" onsubmit="return confirm('Rimuovere questa domanda dalla coda?')"><button type="submit">Rimuovi</button></form></div>
+  {% else %}
+  <p style="color:var(--muted)">Nessuna domanda in coda.</p>
+  {% endfor %}
+  <h2>Cruciverba ({{ pending.crossword|length }})</h2>
+  {% for c in pending.crossword %}
+  <div class="queue-row"><div><strong>{{ c.title or 'Senza titolo' }}</strong><small> — {{ c.entries|length }} parole</small></div>
+  <form method="post" action="{{ url_for('instructor_delete',content_id=c.id) }}" onsubmit="return confirm('Rimuovere questo cruciverba dalla coda?')"><button type="submit">Rimuovi</button></form></div>
+  {% else %}
+  <p style="color:var(--muted)">Nessun cruciverba in coda.</p>
+  {% endfor %}
+</section>
+{% endblock %}

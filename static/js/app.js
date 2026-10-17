@@ -1,0 +1,1 @@
+(function(){var xs=document.querySelectorAll('.choices input,.people input,.peg-picker input');for(var i=0;i<xs.length;i++){xs[i].onchange=function(){if(this.type==='radio'){var g=document.querySelectorAll('input[name="'+this.name+'"]');for(var j=0;j<g.length;j++)g[j].parentNode.classList.remove('selected');}this.parentNode.classList.toggle('selected',this.checked);};}}());

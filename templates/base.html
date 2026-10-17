@@ -1,0 +1,20 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{% block title %}FreeTime{% endblock %}</title><link rel="stylesheet" href="{{ url_for('static',filename='css/style.css',v='0.9b') }}">
+<link rel="manifest" href="{{ url_for('static',filename='manifest.json') }}">
+<meta name="theme-color" content="#070b18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FreeTime">
+<link rel="apple-touch-icon" href="{{ url_for('static',filename='icons/apple-touch-icon.png') }}">
+<link rel="icon" href="{{ url_for('static',filename='icons/icon-192.png') }}">
+</head><body><aside><a class="logo" href="{{ url_for('home') }}">F</a><a href="{{ url_for('home') }}">⌂<small>Home</small></a><a href="{{ url_for('games') }}">◆<small>Giochi</small></a><a href="{{ url_for('game_sessions') }}">◉<small>Sessioni</small></a><a href="{{ url_for('players') }}">♙<small>Player</small></a><a href="{{ url_for('teams') }}">▦<small>Squadre</small></a><a href="{{ url_for('instructor_panel') }}">✎<small>Istruttore</small></a><a href="{{ url_for('history') }}">★<small>Storico</small></a><a href="{{ url_for('leaderboard') }}">♛<small>Classifica</small></a><a href="{{ url_for('achievements') }}">♜<small>Trofei</small></a><a href="{{ url_for('exports') }}">⇩<small>Esporta</small></a></aside><main>{% with ms=get_flashed_messages(with_categories=true) %}{% for c,m in ms %}<div class="msg {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}{% block content %}{% endblock %}</main><script src="{{ url_for('static',filename='js/app.js',v='0.9b') }}"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/service-worker.js').catch(function(err){
+      console.warn('Service worker non registrato:',err);
+    });
+  });
+}
+</script>
+</body></html>

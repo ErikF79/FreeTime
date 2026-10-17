@@ -1,0 +1,9 @@
+[
+  {"game_id":"quiz","question":"Quale film ha vinto l'Oscar 2026 come Miglior Film?","options":["I peccatori","Una battaglia dopo l'altra","Frankenstein","Hamnet"],"correct_index":1},
+  {"game_id":"quiz","question":"Chi ha vinto l'Oscar 2026 come Miglior Attore Protagonista?","options":["Timothée Chalamet","Sean Penn","Michael B. Jordan","Leonardo DiCaprio"],"correct_index":2},
+  {"game_id":"quiz","question":"Chi ha diretto il film 'La vita è bella'?","options":["Federico Fellini","Roberto Benigni","Nanni Moretti","Paolo Sorrentino"],"correct_index":1},
+  {"game_id":"wheel","category":"Cinema","phrase":"La vita è bella"},
+  {"game_id":"impiccato","category":"Cinema","phrase":"Il postino"},
+  {"game_id":"mimo","category":"Cinema","phrase":"Titanic"},
+  {"game_id":"mimo","category":"Cinema","phrase":"Il re leone"}
+]
